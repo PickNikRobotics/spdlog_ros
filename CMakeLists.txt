@@ -20,7 +20,7 @@ if ( ament_cmake_FOUND )
   find_package(rcl_interfaces REQUIRED)
   find_package(spdlog_vendor REQUIRED)
 
-  add_library(${PROJECT_NAME} src/ros2_sink.cpp)
+  add_library(${PROJECT_NAME} SHARED src/ros2_sink.cpp)
 
   target_link_libraries(${PROJECT_NAME}
     spdlog::spdlog
@@ -44,12 +44,13 @@ if ( ament_cmake_FOUND )
 
   install(TARGETS
   ${PROJECT_NAME}
-  example_ros2
-  DESTINATION lib/${PROJECT_NAME})
+  EXPORT export_${PROJECT_NAME}
+  DESTINATION lib)
+
+  install(DIRECTORY include/ DESTINATION include)
 
   ament_export_dependencies(spdlog_vendor rclcpp rcl_interfaces)
-  # ament_export_include_directories(include)  
-  # ament_export_libraries(${PROJECT_NAME})
+  ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
   ament_package()
 
 else()
@@ -77,7 +78,7 @@ else()
 
   target_link_libraries(${PROJECT_NAME}
     spdlog::spdlog
-    ${catkin_LIBRARIES}
+    ${catkin_LIBRARIES}b
   )
 
   add_executable(example_ros src/example_ros.cpp)
